@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN
 
 from app.core.security import (
     create_access_token,
@@ -20,34 +19,44 @@ class AuthService:
         self.repo = UserRepository(db)
 
     async def register(self, data: UserCreate) -> User:
-        if await self.repo.get_by_email(data.email):
+        print(f"DEBUG: Attempting to register {data.email}")
+
+        existing_email = await self.repo.get_by_email(data.email)
+        print(f"DEBUG: Email check result: {existing_email}")
+        if existing_email:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Email already registered",
             )
-        if await self.repo.get_by_username(data.username):
+
+        existing_username = await self.repo.get_by_username(data.username)
+        print(f"DEBUG: Username check result: {existing_username}")
+        if existing_username:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Username already taken"
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username already taken",
             )
-        return await self.repo.create(
+
+        user = await self.repo.create(
             email=data.email,
             username=data.username,
             hashed_password=hash_password(data.password),
         )
+        print(f"DEBUG: Created user: {user.id}")
+        return user
 
     async def login(self, data: LoginRequest) -> TokenResponse:
         user = await self.repo.get_by_email(data.email)
         if not user or not verify_password(data.password, user.hashed_password):
             raise HTTPException(
-                status_code=HTTP_401_UNAUTHORIZED, detail="Invalid email or password"
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid email or password",
             )
-
         if not user.is_active:
             raise HTTPException(
-                status_code=HTTP_403_FORBIDDEN,
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail="Account is inactive",
             )
-
         return TokenResponse(
             access_token=create_access_token(str(user.id)),
             refresh_token=create_refresh_token(str(user.id)),

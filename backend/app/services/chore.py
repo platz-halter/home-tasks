@@ -27,6 +27,15 @@ class ChoreService:
         self.instance_repo = ChoreInstanceRepository(db)
 
     async def create_template(self, data: ChoreTemplateCreate) -> object:
+        if data.category_id:
+            from app.repositories.category import CategoryRepository
+
+            category = await CategoryRepository(self.template_repo.db).get_by_id(
+                data.category_id
+            )
+            if not category:
+                raise HTTPException(status_code=404, detail="Category not found!")
+
         return await self.template_repo.create(**data.model_dump())
 
     async def update_template(

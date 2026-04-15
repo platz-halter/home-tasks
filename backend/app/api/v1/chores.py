@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
+from app.jobs.chore_scheduler import generate_recurring_instances
 from app.models.user import User
 from app.repositories.chore import ChoreInstanceRepository, ChoreTemplateRepository
 from app.schemas.chore import (
@@ -125,3 +126,9 @@ async def list_mine(
 ):
     repo = ChoreInstanceRepository(db)
     return await repo.get_for_user(current_user.id)
+
+
+@router.post("/scheduler/run", status_code=200)
+async def trigger_scheduler(_: User = Depends(get_current_user)):
+    await generate_recurring_instances()
+    return {"status": "scheduler run complete"}

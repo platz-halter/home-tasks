@@ -69,3 +69,8 @@ class ChoreAssignRequest(BaseModel):
 
 class ChoreCompleteRequest(BaseModel):
     difficulty: DifficultyLevel = DifficultyLevel.NORMAL
+
+
+class BulkCompleteRequest(BaseModel):
+    instance_ids: list[uuid.UUID] = Field(min_length=1)
+    difficulty: DifficultyLevel = DifficultyLevel.NORMAL

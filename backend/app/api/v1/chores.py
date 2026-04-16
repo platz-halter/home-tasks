@@ -7,8 +7,10 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.jobs.chore_scheduler import generate_recurring_instances
 from app.models.user import User
+from app.repositories.auto_assign import AutoAssignExceptionRepository
 from app.repositories.chore import ChoreInstanceRepository, ChoreTemplateRepository
 from app.schemas.chore import (
+    BulkCompleteRequest,
     ChoreAssignRequest,
     ChoreCompleteRequest,
     ChoreInstanceResponse,
@@ -21,7 +23,45 @@ from app.services.chore import ChoreService
 router = APIRouter(prefix="/chores", tags=["chores"])
 
 
-# --- Templates ---
+@router.post("/instances/bulk-complete", status_code=200)
+async def bulk_complete(
+    data: BulkCompleteRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = ChoreService(db)
+    results = []
+    for instance_id in data.instance_ids:
+        instance = await service.complete_instance(
+            instance_id,
+            current_user,
+            ChoreCompleteRequest(difficulty=data.difficulty),
+        )
+        results.append(instance)
+    return {"completed": len(results)}
+
+
+@router.post("/{template_id}/exceptions/{user_id}", status_code=201)
+async def add_exception(
+    template_id: uuid.UUID,
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    repo = AutoAssignExceptionRepository(db)
+    await repo.create(user_id=user_id, template_id=template_id)
+    return {"status": "exception added"}
+
+
+@router.delete("/{template_id}/exceptions/{user_id}", status_code=204)
+async def remove_exception(
+    template_id: uuid.UUID,
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    repo = AutoAssignExceptionRepository(db)
+    await repo.delete(user_id=user_id, template_id=template_id)
 
 
 @router.get("", response_model=list[ChoreTemplateResponse])
@@ -61,9 +101,6 @@ async def delete_chore(
 ):
     service = ChoreService(db)
     await service.delete_template(template_id)
-
-
-# --- Instances ---
 
 
 @router.post(

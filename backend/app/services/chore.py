@@ -112,9 +112,14 @@ class ChoreService:
 
         template = await self.template_repo.get_by_id(instance.template_id)
         multiplier = DIFFICULTY_MULTIPLIERS[data.difficulty]
+
         points = int(template.base_points * multiplier)
 
         user.total_points += points
+
+        from app.repositories.stats import StatsRepository
+
+        await StatsRepository(self.instance_repo.db).add_points(user.id, points)
 
         return await self.instance_repo.update(
             instance,

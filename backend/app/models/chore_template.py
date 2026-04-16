@@ -40,7 +40,7 @@ class ChoreTemplate(Base):
     category = relationship("Category", back_populates="chores")
 
     # Points and difficulty
-    base_points: Mapped[int] = mapped_column(Integer, default=10)
+    base_points: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
     difficulty: Mapped[DifficultyLevel] = mapped_column(
         Enum(DifficultyLevel), default=DifficultyLevel.NORMAL
     )

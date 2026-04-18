@@ -130,7 +130,7 @@ export default function DashboardPage() {
                     key={entry.user_id}
                     className={cn(
                       "flex items-center gap-3 rounded-lg p-2 transition-colors",
-                      entry.user_id === user?.id && "bg-primary/5",
+                      entry.user_id === user?.id && "bg-primary/10",
                     )}
                   >
                     <span

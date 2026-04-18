@@ -430,7 +430,7 @@ export default function ChoresPage() {
                         key={chore.id}
                         className={cn(
                           "cursor-pointer",
-                          selectedTemplateIds.has(chore.id) && "bg-primary/5",
+                          selectedTemplateIds.has(chore.id) && "bg-primary/10",
                         )}
                         onClick={() => toggleTemplateSelect(chore.id)}
                       >
@@ -578,7 +578,7 @@ export default function ChoresPage() {
                         className={cn(
                           "cursor-pointer",
                           selectedInstanceIds.has(instance.id) &&
-                            "bg-primary/5",
+                            "bg-primary/10",
                         )}
                         onClick={() => toggleInstanceSelect(instance.id)}
                       >
@@ -776,7 +776,8 @@ export default function ChoresPage() {
                         key={instance.id}
                         className={cn(
                           "cursor-pointer",
-                          selectedPendingIds.has(instance.id) && "bg-primary/5",
+                          selectedPendingIds.has(instance.id) &&
+                            "bg-primary/10",
                         )}
                         onClick={() => togglePendingSelect(instance.id)}
                       >

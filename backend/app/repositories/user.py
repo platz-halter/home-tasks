@@ -31,8 +31,7 @@ class UserRepository:
 
     async def update(self, user: User, **kwargs) -> User:
         for key, value in kwargs.items():
-            if value is not None:
-                setattr(user, key, value)
+            setattr(user, key, value)
         await self.db.flush()
         await self.db.refresh(user)
         return user

@@ -28,7 +28,7 @@ async def update_me(
     db: AsyncSession = Depends(get_db),
 ):
     repo = UserRepository(db)
-    return await repo.update(current_user, **data.model_dump(exclude_none=True))
+    return await repo.update(current_user, **data.model_dump(exclude_unset=True))
 
 
 @router.post("/me/avatar", response_model=UserResponse)

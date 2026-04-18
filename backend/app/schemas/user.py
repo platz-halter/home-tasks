@@ -22,8 +22,8 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     username: str | None = Field(default=None, min_length=2, max_length=50)
-    language: str | None = Field(default=None, pattern="^(en | de)$")
-    theme: str | None = Field(default=None, pattern="^(light | dark)$")
+    language: str | None = Field(default=None, pattern="^(en|de)$")
+    theme: str | None = Field(default=None, pattern="^(light|dark)$")
     break_mode: bool | None = None
 
 

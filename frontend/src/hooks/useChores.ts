@@ -55,3 +55,82 @@ export function useChoreTemplates() {
     },
   });
 }
+
+export function useCategories() {
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data } = await api.get("/categories");
+      return data;
+    },
+  });
+}
+
+export function useCreateChore() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: object) => {
+      const { data } = await api.post("/chores", payload);
+      return data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["chores"] }),
+  });
+}
+
+export function useDeleteChore() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (templateId: string) => {
+      await api.delete(`/chores/${templateId}`);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["chores"] }),
+  });
+}
+
+export function useClaimChore() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (instanceId: string) => {
+      const { data } = await api.post(`/chores/instances/${instanceId}/claim`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chores"] });
+    },
+  });
+}
+
+export function useBulkComplete() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (instanceIds: string[]) => {
+      const { data } = await api.post("/chores/instances/bulk-complete", {
+        instance_ids: instanceIds,
+        difficulty: "normal",
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chores"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
+    },
+  });
+}
+
+export function useQuickComplete() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (templateId: string) => {
+      const { data: instance } = await api.post(`/chores/${templateId}/spawn`);
+      const { data: completed } = await api.post(
+        `/chores/instances/${instance.id}/complete`,
+        { difficulty: "normal" },
+      );
+      return completed;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chores"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
+    },
+  });
+}

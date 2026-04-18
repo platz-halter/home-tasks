@@ -1,5 +1,6 @@
 # Profile images
-.backend/avatars/
+backend/avatars/*
+!backend/avatars/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

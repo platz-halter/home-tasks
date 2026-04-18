@@ -65,12 +65,13 @@ export default function ProfilePage() {
       document.documentElement.classList.remove("light", "dark");
       document.documentElement.classList.add(theme);
     } catch (err: any) {
-      console.error("Save error:", err);
       const detail = err.response?.data?.detail;
       if (Array.isArray(detail)) {
         setSaveError(detail.map((d: any) => d.msg).join(", "));
+      } else if (typeof detail === "string") {
+        setSaveError(detail);
       } else {
-        setSaveError(detail ?? "Failed to save settings");
+        setSaveError("Failed to save settings");
       }
     } finally {
       setSaving(false);

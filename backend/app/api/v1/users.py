@@ -28,6 +28,13 @@ async def update_me(
     db: AsyncSession = Depends(get_db),
 ):
     repo = UserRepository(db)
+    if data.username and data.username != current_user.username:
+        existing = await repo.get_by_username(data.username)
+        if existing:
+            raise HTTPException(
+                status_code=409,
+                detail="Username already taken",
+            )
     return await repo.update(current_user, **data.model_dump(exclude_unset=True))
 
 

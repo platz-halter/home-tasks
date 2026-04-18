@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
+import { useAuthStore } from "@/store/auth";
 
 export function useMyChores() {
   return useQuery({
@@ -42,6 +43,7 @@ export function useCompleteChore() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
+      useAuthStore.getState().fetchUser();
     },
   });
 }
@@ -113,6 +115,7 @@ export function useBulkComplete() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
+      useAuthStore.getState().fetchUser();
     },
   });
 }
@@ -131,6 +134,7 @@ export function useQuickComplete() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
+      useAuthStore.getState().fetchUser();
     },
   });
 }

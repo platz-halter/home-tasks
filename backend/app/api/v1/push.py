@@ -64,6 +64,18 @@ async def unsubscribe(
     return {"status": "unsubscribed"}
 
 
+"""
+@router.post("/test-all")
+async def test_all(
+    db: AsyncSession = Depends(get_db),
+):
+    from app.services.push import send_push_to_all
+
+    await send_push_to_all(db, "HomeQuest", "Push notifications for all")
+    return {"status": "sent"}
+"""
+
+
 @router.post("/test")
 async def test_push(
     current_user: User = Depends(get_current_user),

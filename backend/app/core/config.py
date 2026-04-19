@@ -20,5 +20,10 @@ class Settings(BaseSettings):
     # Household
     WEEKLY_POINTS_GOAL: int = 100
 
+    # Push notifications
+    VAPID_PRIVATE_KEY: str = ""
+    VAPID_PUBLIC_KEY: str = ""
+    VAPID_CLAIMS_EMAIL: str = "mailto:admin@homequest.local"
+
 
 settings = Settings()

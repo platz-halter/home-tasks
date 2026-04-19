@@ -26,7 +26,6 @@ dependencies = [
   "pywebpush>=2.0.0",
   # i18n
   "babel>=2.14.0",
-
   # Pydanic Email
   "pydantic[email]>=2.0.0",
 ]

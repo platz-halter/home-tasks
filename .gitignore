@@ -1,3 +1,5 @@
+*.pem
+
 # Profile images
 backend/avatars/*
 !backend/avatars/.gitkeep

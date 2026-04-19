@@ -27,6 +27,8 @@ import {
   Coffee,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePush } from "@/hooks/usePush";
+import { Bell, BellOff } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, setUser, fetchUser } = useAuthStore();
@@ -45,6 +47,16 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const initials = user?.username?.slice(0, 2).toUpperCase() ?? "HQ";
+
+  const {
+    supported,
+    subscribed,
+    loading,
+    error: pushError,
+    subscribe,
+    unsubscribe,
+    testPush,
+  } = usePush();
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -345,6 +357,60 @@ export default function ProfilePage() {
                 On break
               </Badge>
             </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Push notifications */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Notifications</CardTitle>
+          <CardDescription>
+            Get reminders for assigned chores even when the app is closed
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!supported && (
+            <p className="text-sm text-muted-foreground">
+              Push notifications are not supported in this browser.
+            </p>
+          )}
+          {supported && (
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                {subscribed ? (
+                  <Bell className="h-5 w-5 text-primary" />
+                ) : (
+                  <BellOff className="h-5 w-5 text-muted-foreground" />
+                )}
+                <div>
+                  <p className="text-sm font-medium">
+                    {subscribed
+                      ? "Notifications enabled"
+                      : "Notifications disabled"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {subscribed
+                      ? "You'll receive reminders for your chores"
+                      : "Enable to get chore reminders"}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant={subscribed ? "outline" : "default"}
+                size="sm"
+                disabled={loading}
+                onClick={subscribed ? unsubscribe : subscribe}
+              >
+                {loading ? "..." : subscribed ? "Disable" : "Enable"}
+              </Button>
+            </div>
+          )}
+          {pushError && <p className="text-sm text-destructive">{pushError}</p>}
+          {subscribed && (
+            <Button variant="outline" size="sm" onClick={testPush}>
+              Send test notification
+            </Button>
           )}
         </CardContent>
       </Card>

@@ -28,6 +28,7 @@ dependencies = [
   "babel>=2.14.0",
   # Pydanic Email
   "pydantic[email]>=2.0.0",
+  "py-vapid>=1.9.4",
 ]
 
 [project.optional-dependencies]

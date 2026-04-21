@@ -30,7 +30,9 @@ class ChoreInstance(Base):
         ForeignKey("chore_templates.id", ondelete="CASCADE"),
         nullable=False,
     )
-    template = relationship("ChoreTemplate", back_populates="instances")
+    template = relationship(
+        "ChoreTemplate", back_populates="instances", passive_deletes=True
+    )
 
     # Assignment
     assigned_to_id: Mapped[uuid.UUID | None] = mapped_column(

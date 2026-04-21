@@ -62,4 +62,6 @@ class ChoreTemplate(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    instances = relationship("ChoreInstance", back_populates="template")
+    instances = relationship(
+        "ChoreInstance", back_populates="template", passive_deletes=True
+    )
